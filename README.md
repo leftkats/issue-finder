@@ -26,18 +26,12 @@ jobs:
   aggregate:
     runs-on: ubuntu-latest
     steps:
-      - name: Aggregate Issues
-        uses: issue/issue-finder@v1
+      - name: Fetch Issues using External Action
+        uses: leftkats/issue-finder@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repositories: |
-            [
-              "facebook/react",
-              "vercel/next.js",
-              "tailwindlabs/tailwindcss"
-            ]
+            - feldroy/air
+            - python/pymanager
           labels: |
-            [
-              "good first issue",
-              "help wanted"
-            ]
+            - good first issue
