@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Issues using External Action
-        uses: leftkats/issue-finder@main
+        uses: leftkats/issue-finder@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repositories: |
