@@ -1,0 +1,45 @@
+name: 'Multi-Repo Issue Finder'
+author: 'leftkats'
+description: 'Aggregates issues from multiple repositories.'
+inputs:
+  repositories:
+    description: 'YAML list of repositories (using dashes)'
+    required: true
+  labels:
+    description: 'YAML list of labels (using dashes)'
+    default: |
+      - "good first issue"
+  token:
+    description: 'GitHub Token'
+    default: ${{ github.token }}
+
+branding:
+  icon: 'list'
+  color: 'blue'
+
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPO_INPUT: ${{ inputs.repositories }}
+        LABEL_INPUT: ${{ inputs.labels }}
+      run: |
+        # Convert YAML dash list to a space-separated string using yq
+        CLEAN_REPOS=$(echo "$REPO_INPUT" | yq -r '.[]' | xargs)
+        CLEAN_LABELS=$(echo "$LABEL_INPUT" | yq -r '.[]')
+
+        echo "## Issue Summary Dashboard" >> $GITHUB_STEP_SUMMARY
+        echo "| Repository | Label | Issue Title | Link |" >> $GITHUB_STEP_SUMMARY
+        echo "| :--- | :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+
+        for repo in $CLEAN_REPOS; do
+          while IFS= read -r label; do
+            if [ -z "$label" ]; then continue; fi
+
+            gh issue list -R "$repo" -l "$label" --limit 5 --json title,url \
+            --template '{{range .}}| '"$repo"' | '"$label"' | {{.title}} | [View]({{.url}}) |{{index (print "\n")}}{{end}}' >> $GITHUB_STEP_SUMMARY
+
+          done <<< "$CLEAN_LABELS"
+        done
