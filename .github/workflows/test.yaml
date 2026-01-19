@@ -1,0 +1,20 @@
+name: Local Action Test
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Action Locally
+        uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repositories: |
+            - mlg87/pr-reviewer-slack-notify-action
+            - feldroy/air
+          labels: |
+            - good first issue
+
