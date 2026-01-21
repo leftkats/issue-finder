@@ -13,7 +13,7 @@ A high-performance GitHub Action designed to aggregate issues across multiple re
 
 ### Basic Configuration
 
-Create a file named `.github/workflows/issue-check.yml` in your repository.
+Create a file named `.github/workflows/issue-finder.yml` in your repository.
 
 ```yaml
 name: Contribution Dashboard
@@ -21,6 +21,9 @@ on:
   schedule:
     - cron: '0 15 * * *' # More info: https://crontab.guru/
   workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/issue-finder.yml
 
 jobs:
   aggregate:
